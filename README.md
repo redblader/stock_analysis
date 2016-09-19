@@ -11,4 +11,6 @@ Description: used for filting, measuring, estimating stock
          http://pandas.pydata.org/pandas-docs/version/0.16.2/api.html
 
 3 Source code
-  
+
+4 Commit code
+  git add --> git commit --> git push
