@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 class CSVFile:
 
     def __init__(self):
-        self._min_rows = 5
+        self._MIN_ROWS_IN_FILE = 50
         self._data_storage = dict()
 
     def get_storage(self):
@@ -21,11 +21,10 @@ class CSVFile:
             print 'open file %s failed, skipped it' % file_name, err_info
             return False
 
-        if not csv_data.empty and len(csv_data) >= self._min_rows:
+        if not csv_data.empty and len(csv_data) >= self._MIN_ROWS_IN_FILE:
             self._data_storage[name] = csv_data
-        else:
-            return False
-        return True
+            return True
+        return False
 
     def load_folder(self, folder_path):
         file_list = os.listdir(folder_path)
@@ -39,32 +38,34 @@ class CSVFile:
         print
         print 'total:', total, 'success:', success
 
-    def get_avg(self, stock_name, days_num):
+    def get_avg(self, stock_name, days_num, col_name='close'):
         if stock_name in self._data_storage:
-            hist_data = pd.DataFrame(self._data_storage[stock_name]['close'])
-            for i in range(days_num):
+            hist_data = pd.DataFrame(self._data_storage[stock_name][col_name])
+            for i in range(days_num-1):
                 shift = hist_data['close'].shift(periods=i+1, axis=0)
                 hist_data.insert(i+1, 's'+str(i+1), shift)
             return list(hist_data.mean(axis=1))
 
-    def get_avg_lines(self, stock_name, *days_num_list):
+    def get_multi_avg_lines(self, stock_name, *days_num_list, col_name='close'):
         avg_lines_dict = dict()
         for days_num in days_num_list:
-            avg_line = self.get_avg(stock_name, days_num)
-            avg_lines_dict['s' + str(days_num)] = avg_line
+            avg_line = self.get_avg(stock_name, days_num, col_name)
+            avg_lines_dict[str(days_num)+'d'] = avg_line
         return pd.DataFrame(avg_lines_dict)
 
 if __name__ == "__main__":
     csv = CSVFile()
     csv.load_folder('./storage/')
     stocks_data = csv.get_storage()
+    asd = csv.get_avg('SH600519', 3)
+    print pd.Series(asd).iloc[-10:]
     #print list(stocks_data['SH600057']['close'][-20:])
-    avg5_points = csv.get_avg('SH600057', 5)
+    #avg5_points = csv.get_avg('SH600057', 5)
     #print avg5_points[-20:]
-    ds = pd.DataFrame({'basic':list(stocks_data['SH600057']['close'][-50:]), 'f_days':avg5_points[-50:]})
-    ds.plot()
-    plt.legend(loc='best')
-    plt.show()
+    #ds = pd.DataFrame({'basic':list(stocks_data['SH600057']['close'][-50:]), 'f_days':avg5_points[-50:]})
+    #ds.plot()
+    #plt.legend(loc='best')
+    #plt.show()
     #reference = [0, 0, 0, 0, 0, 0, 0, 0.03, 0.06, 0.1]
     #res = {'AB000000': reference}
     #for each in all_data:
