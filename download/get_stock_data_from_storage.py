@@ -46,7 +46,7 @@ class CSVFile:
                 hist_data.insert(i+1, 's'+str(i+1), shift)
             return list(hist_data.mean(axis=1))
 
-    def get_multi_avg_lines(self, stock_name, *days_num_list, col_name='close'):
+    def get_multi_avg_lines(self, stock_name, col_name='close', *days_num_list):
         avg_lines_dict = dict()
         for days_num in days_num_list:
             avg_line = self.get_avg(stock_name, days_num, col_name)
@@ -59,33 +59,5 @@ if __name__ == "__main__":
     stocks_data = csv.get_storage()
     asd = csv.get_avg('SH600519', 3)
     print pd.Series(asd).iloc[-10:]
-    #print list(stocks_data['SH600057']['close'][-20:])
-    #avg5_points = csv.get_avg('SH600057', 5)
-    #print avg5_points[-20:]
-    #ds = pd.DataFrame({'basic':list(stocks_data['SH600057']['close'][-50:]), 'f_days':avg5_points[-50:]})
-    #ds.plot()
-    #plt.legend(loc='best')
-    #plt.show()
-    #reference = [0, 0, 0, 0, 0, 0, 0, 0.03, 0.06, 0.1]
-    #res = {'AB000000': reference}
-    #for each in all_data:
-    #    data = all_data[each]
-    #    res[each] = (data[-10:].reset_index()['close'] - data[-10:].reset_index()['open']) / data[-10:].reset_index()['open']
-    #ab = pd.DataFrame(res)
-    #compute_res = ab.corr(method='pearson', min_periods=8).sort(columns='AB000000',
-    #                                                            ascending=False).head(10)['AB000000']
-    #print compute_res
-    #data_res = compute_res.reset_index()
-    #
-    #show_data = {'AB000000': reference}
-    #for i in range(4):
-    #    stock_name = data_res.iat[i+1, 0]
-    #    show_data[stock_name] = res[stock_name]
-    #
-    #show_plot = pd.DataFrame(show_data)
-    #print show_plot
-    #show_plot = show_plot.cumsum()
-    #show_plot.plot()
-    #plt.legend(loc='best')
-    #plt.show()
+
 
