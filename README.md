@@ -10,7 +10,13 @@ Description: used for filting, measuring, estimating stock
   pandas http://pandas.pydata.org/pandas-docs/stable/10min.html
          http://pandas.pydata.org/pandas-docs/version/0.16.2/api.html
 
-3 Source code
+3 how to generate rsa
+  ssh-keygen -t rsa
+  cat ~/.ssh/id_rsa.pub
 
-4 Commit code
+4 how to get code
+  git init
+  git pull git@github.com:redblader/stock_analysis.git
+
+5 Commit code
   git add --> git commit --> git push
