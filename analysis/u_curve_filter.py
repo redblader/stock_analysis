@@ -12,7 +12,7 @@ def u_filter(x):
     if minidx > float(length)*0.4 and minidx < float(length)*0.7:
         la = (float(col[minidx]) - float(col[0]))/float(minidx)
         ra = (float(col[-1]) - float(col[minidx]))/float(length - minidx - 1)
-        if la < 0 and ra > 0 and col[-1] < col[0]:
+        if la < 0 and ra > 0 and col[-1] < float(col[0])*0.95:
             ref = [la * float(i) + float(col[0]) for i in range(minidx)] + [ra * float(j - minidx) + float(col[minidx]) for j in range(minidx, length, 1)]
             for i in range(length):
                 if col[i] > ref[i]:
