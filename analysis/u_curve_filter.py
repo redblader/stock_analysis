@@ -2,23 +2,24 @@ import sys
 sys.path.append("..\download")
 import get_stock_data_from_storage as sd
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
+
 
 def u_filter(x):
     col = list(x)
-    minidx = col.index(min(col))
+    min_index = col.index(min(col))
     length = len(col)
-    if minidx > float(length)*0.4 and minidx < float(length)*0.7:
-        la = (float(col[minidx]) - float(col[0]))/float(minidx)
-        ra = (float(col[-1]) - float(col[minidx]))/float(length - minidx - 1)
-        if la < 0 and ra > 0 and col[-1] < float(col[0])*0.95:
-            ref = [la * float(i) + float(col[0]) for i in range(minidx)] + [ra * float(j - minidx) + float(col[minidx]) for j in range(minidx, length, 1)]
-            for i in range(length):
-                if col[i] > ref[i]:
-                    return [0, minidx, length]
-            return [1, minidx, length]
-    return [0, minidx, length]
+    if float(length) * 0.4 < min_index < float(length) * 0.7:
+        la = (float(col[min_index]) - float(col[0]))/float(min_index)
+        ra = (float(col[-1]) - float(col[min_index]))/float(length - min_index - 1)
+        if la < 0 < ra:
+            if col[-1] < float(col[0])*0.95:
+                ref = [la * float(i) + float(col[0]) for i in range(min_index)] +\
+                      [ra * float(j - min_index) + float(col[min_index]) for j in range(min_index, length, 1)]
+                std_diff_info = list(((pd.Series(ref) - pd.Series(col)).abs()/float(x.mean())).describe())
+                if std_diff_info[1] < 0.01 and std_diff_info[-1] < 0.02:
+                    return [1, min_index, length, std_diff_info[1], std_diff_info[-1]]
+    return [0, min_index, length, 1, 1]
 
 if __name__ == '__main__':
     csv_data = sd.CSVFile()
@@ -41,5 +42,3 @@ if __name__ == '__main__':
             se.plot()
             param = '_'.join([str(par) for par in flt_res[each]])
             plt.savefig('./'+str(days) + 'days_' + each + '_' + param + '.jpg')
-    
-    
