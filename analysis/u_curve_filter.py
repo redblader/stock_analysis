@@ -26,19 +26,19 @@ def u_filter(x):
                     return [1, min_index, length, std_diff_info[1], std_diff_info[-1]]
     return [0, min_index, length, 1, 1]
 
-if __name__ == '__main__':
+def search_all_stocks(storage_path, max_days, min_days, save_figure_flg, filter_func):
     csv_data = sd.CSVFile()
-    csv_data.load_folder('../download/storage/')
-    stocks = csv_data.get_storage()
+    csv_data.load_folder(storage_path)
+    stock_storage = csv_data.get_storage()
     total_stocks = []
-    for days in range(65, 15, -1):
+    for days in range(max_days, min_days, -1):
         print days, ' days',
         ds = pd.DataFrame()
-        for stock_name in stocks:
+        for stock_name in stock_storage:
             avg_seq = csv_data.get_avg(stock_name, 5)
-            if len(stocks[stock_name]) >= (days+5):
+            if len(stock_storage[stock_name]) >= (days+5):
                 ds.insert(0, stock_name, avg_seq[-days:])
-        res = ds.apply(u_filter)
+        res = ds.apply(filter_func)
         res_ds = pd.DataFrame(dict(res)).T
         flt_res = dict(res_ds[res_ds[0] == 1].T)
         new_stocks = []
@@ -47,9 +47,14 @@ if __name__ == '__main__':
                 new_stocks.append(each)
         total_stocks = total_stocks + new_stocks
         print len(new_stocks), ' stocks: ', ' '.join(new_stocks)
-        for each in new_stocks:
-            se = ds.loc[:, each]
-            plt.clf()
-            se.plot()
-            param = '_'.join([str(par) for par in flt_res[each]])
-            plt.savefig('./'+str(days) + 'days_' + each + '_' + param + '.jpg')
+        if save_figure_flg:
+            for each in new_stocks:
+                se = ds.loc[:, each]
+                plt.clf()
+                se.plot()
+                param = '_'.join([str(par) for par in flt_res[each]])
+                plt.savefig('./'+str(days) + 'days_' + each + '_' + param + '.jpg')
+    return total_stocks
+
+if __name__ == '__main__':
+    search_all_stocks('../download/storage/', 65, 15, True, u_filter)
