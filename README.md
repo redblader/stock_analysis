@@ -1,10 +1,12 @@
 Project name : stock_analysis
 
-Description  : used for filter, measurement, estimating stock strategy
+Description  : filter stocks with strategy, get real time stock data, estimate stock strategy
 
-Code language: python (pandas, matplotlib, url2lib)
+Code language: python
 
-Author       : zhu haofeng (271481778@qq.com)
+python lib   : pandas, matplotlib, url2lib
+
+Author       : zhu haofeng 271481778@qq.com
 
 
 1 Environment Requirement
@@ -13,7 +15,7 @@ Author       : zhu haofeng (271481778@qq.com)
 
   https://www.continuum.io/downloads
 
-2 python lib study
+2 python lib materials
 
   numpy http://old.sebug.net/paper/books/scipydoc/numpy_intro.html
 
@@ -26,6 +28,8 @@ Author       : zhu haofeng (271481778@qq.com)
   setup 通达信金融终端 software
 
   http://www.pc6.com/softview/SoftView_142489.html
+  
+  All stocks history data can be download from this software
 
 4 how to generate rsa-key for git env
 
@@ -42,3 +46,15 @@ Author       : zhu haofeng (271481778@qq.com)
 6 commit code with code command
 
   git add --> git commit --> git push
+  
+7 download folder (scripts and stocks history data files)
+  
+  "get_stock_data_from_storage.py" script can read stocks' history data from csv files (stored in storage folder ) which export from tongxinda software
+  
+  "get_realtime_stock_data.py" script can get real time stocks data with sina stock interface
+
+8 analysis folder (strategy script)
+  
+  "u_curve_filter.py" which is introduced with Venus strategy, filter all stocks with U shape for nearest 5 days k-line of stocks, generate plot figure for result.
+  
+  
