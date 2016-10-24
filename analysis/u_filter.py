@@ -26,16 +26,14 @@ def u_filter(x):
                     return [1, min_index, length, std_diff_info[1], std_diff_info[-1]]
     return [0, min_index, length, 1, 1]
 
-def search_all_stocks(storage_path, max_days, min_days, save_figure_flg, filter_func):
-    csv_data = sd.CSVFile()
-    csv_data.load_folder(storage_path)
-    stock_storage = csv_data.get_storage()
+
+def search_all_stocks_with_u_shape(stock_storage, max_days, min_days, save_figure_flg, filter_func=u_filter):
     total_stocks = []
     for days in range(max_days, min_days, -1):
         print days, ' days',
         ds = pd.DataFrame()
         for stock_name in stock_storage:
-            avg_seq = csv_data.get_avg(stock_name, 5)
+            avg_seq = sd.CSVFile.get_avg(stock_storage, stock_name, 5)
             if len(stock_storage[stock_name]) >= (days+5):
                 ds.insert(0, stock_name, avg_seq[-days:])
         res = ds.apply(filter_func)
@@ -57,4 +55,4 @@ def search_all_stocks(storage_path, max_days, min_days, save_figure_flg, filter_
     return total_stocks
 
 if __name__ == '__main__':
-    search_all_stocks('../download/storage/', 65, 15, True, u_filter)
+    search_all_stocks_with_u_shape(sd.CSVFile().load_all_history_stocks('../download/storage/'), 65, 15, True, u_filter)

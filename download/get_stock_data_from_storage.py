@@ -1,6 +1,5 @@
 import os
 import pandas as pd
-import matplotlib.pyplot as plt
 
 
 class CSVFile:
@@ -9,10 +8,7 @@ class CSVFile:
         self._MIN_ROWS_IN_FILE = 50
         self._data_storage = dict()
 
-    def get_storage(self):
-        return self._data_storage
-
-    def load_file(self, file_name):
+    def _load_file(self, file_name):
         name = os.path.basename(file_name).split('.')[0]
         try:
             csv_data = pd.read_csv(file_name, sep='\t', skiprows=2, header=None,
@@ -26,21 +22,26 @@ class CSVFile:
             return True
         return False
 
-    def load_folder(self, folder_path):
+    def _load_folder(self, folder_path):
         file_list = os.listdir(folder_path)
         total = len(file_list)
         success = 0
         for count, file_name in enumerate(file_list):
             file_name_with_full_path = folder_path + file_name
-            success += self.load_file(file_name_with_full_path)
+            success += self._load_file(file_name_with_full_path)
             out_string = '%4d/%4d' % (count, total)
             print '\b'*(len(out_string) + 2), out_string,
         print
         print 'total:', total, 'success:', success
 
-    def get_avg(self, stock_name, days_num, col_name='close'):
-        if stock_name in self._data_storage:
-            hist_data = pd.DataFrame(self._data_storage[stock_name][col_name])
+    def load_all_history_stocks(self, storage_path):
+        self._load_folder(storage_path)
+        return self._data_storage
+
+    @staticmethod
+    def get_avg(stock_storage, stock_name, days_num, col_name='close'):
+        if stock_name in stock_storage:
+            hist_data = pd.DataFrame(stock_storage[stock_name][col_name])
             for i in range(days_num-1):
                 shift = hist_data['close'].shift(periods=i+1, axis=0)
                 hist_data.insert(i+1, 's'+str(i+1), shift)
@@ -55,9 +56,8 @@ class CSVFile:
 
 if __name__ == "__main__":
     csv = CSVFile()
-    csv.load_folder('./storage/')
-    stocks_data = csv.get_storage()
-    asd = csv.get_avg('SH600519', 3)
+    stocks_data = csv.load_all_history_stocks('./storage/')
+    asd = csv.get_avg(stocks_data, 'SH600519', 3)
     print pd.Series(asd).iloc[-10:]
 
 
